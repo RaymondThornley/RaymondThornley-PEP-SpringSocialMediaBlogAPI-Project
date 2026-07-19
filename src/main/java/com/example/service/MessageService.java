@@ -2,10 +2,19 @@ package com.example.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.example.entity.Account;
 import com.example.entity.Message;
+import com.example.repository.AccountRepository;
+import com.example.repository.MessageRepository;
 
 public class MessageService {
+
+    @Autowired
+    private MessageRepository messageRepository;
+    @Autowired
+    private AccountRepository accountRepository;
 
     public Message createMessage(Message newMessage) {
         if (newMessage.getMessageText().length() == 0) {
