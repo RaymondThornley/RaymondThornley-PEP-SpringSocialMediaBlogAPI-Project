@@ -46,16 +46,16 @@ public class MessageService {
         return message.get();
     }
 
-    public Message deleteMessage(int messageId) {
+    public Integer deleteMessage(int messageId) {
         Optional<Message> deletedMessage = messageRepository.findById(messageId);
         if (deletedMessage.isEmpty()) {
             return null;
         }
         this.messageRepository.deleteById(messageId);
-        return deletedMessage.get();
+        return 1;
     }
 
-    public Message updateMessage(int messageId, Message newMessage) {
+    public Integer updateMessage(int messageId, Message newMessage) {
         String newMessageText = newMessage.getMessageText();
         if (newMessageText.length() == 0) {
             return null;
@@ -63,10 +63,15 @@ public class MessageService {
         if (newMessageText.length() > 255) {
             return null;
         }
+        Optional<Message> oldMessageOptional = messageRepository.findById(messageId);
+        if (oldMessageOptional.isEmpty()) {
+            return null;
+        }
+        Message oldMessage = oldMessageOptional.get();
 
-        newMessage.setMessageId(messageId);
-        messageRepository.save(newMessage);
-        return messageRepository.findById(messageId).get();
+        oldMessage.setMessageText(newMessageText);
+        messageRepository.save(oldMessage);
+        return 1;
     }
 
     public List<Message> getMessageByAccount(int accountId) {
