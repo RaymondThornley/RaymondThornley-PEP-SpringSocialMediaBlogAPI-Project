@@ -20,15 +20,15 @@ public class AccountService {
           return null;
       }
       
-      Account existingAccount = accountDAO.getAccountByUsername(newAccount.getUsername());
+      Account existingAccount = accountRepository.findByUsername(newAccount.getUsername());
       if (existingAccount != null) {
           return null;
       }
-      return accountDAO.insertAccount(newAccount);
+      return accountRepository.save(newAccount);
     }
 
   public Account loginUser(Account loginAccount) {
-      Account existingAccount = accountDAO.getAccountByUsername(loginAccount.getUsername());
+      Account existingAccount = accountRepository.findByUsername(loginAccount.getUsername());
       if (existingAccount == null) {
           return null;
       }

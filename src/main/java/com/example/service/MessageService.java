@@ -3,12 +3,14 @@ package com.example.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.example.entity.Account;
 import com.example.entity.Message;
 import com.example.repository.AccountRepository;
 import com.example.repository.MessageRepository;
 
+@Service
 public class MessageService {
 
     @Autowired
@@ -24,25 +26,25 @@ public class MessageService {
             return null;
         }
 
-        Account messageAccount = this.accountDAO.getAccountById(newMessage.getPostedBy());
+        Account messageAccount = this.accountRepository.getById(newMessage.getPostedBy());
         if (messageAccount == null) {
             return null;
         }
-        return messageDAO.insertMessage(newMessage);
+        return messageRepository.save(newMessage);
     }
 
     public List<Message> getAllMessages() {
-        return this.messageDAO.getAllMessages();
+        return this.messageRepository.findAll();
     }
 
     public Message getMessage(int messageId) {
-        return this.messageDAO.getMessageById(messageId);
+        return this.messageRepository.getById(messageId);
     }
 
     public Message deleteMessage(int messageId) {
-        Message deletedMessage = messageDAO.getMessageById(messageId);
+        Message deletedMessage = messageRepository.getById(messageId);
         if (deletedMessage != null) {
-            this.messageDAO.deleteMessage(messageId);
+            this.messageRepository.deleteById(messageId);
         }
         return deletedMessage;
     }
@@ -56,11 +58,12 @@ public class MessageService {
             return null;
         }
 
-        messageDAO.updateMessage(messageId, newMessageText);
-        return messageDAO.getMessageById(messageId);
+        newMessage.setMessageId(messageId);
+        messageRepository.save(newMessage);
+        return messageRepository.getById(messageId);
     }
 
     public List<Message> getMessageByAccount(int accountId) {
-        return messageDAO.getMessageByAccount(accountId);
+        return messageRepository.findByPostedBy(accountId);
     }
 }
