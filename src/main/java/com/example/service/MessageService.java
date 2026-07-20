@@ -1,6 +1,7 @@
 package com.example.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,8 @@ public class MessageService {
             return null;
         }
 
-        Account messageAccount = this.accountRepository.getById(newMessage.getPostedBy());
-        if (messageAccount == null) {
+        Optional<Account> messageAccount = this.accountRepository.findById(newMessage.getPostedBy());
+        if (messageAccount.isEmpty()) {
             return null;
         }
         return messageRepository.save(newMessage);
@@ -38,15 +39,20 @@ public class MessageService {
     }
 
     public Message getMessage(int messageId) {
-        return this.messageRepository.getById(messageId);
+        Optional<Message> message = this.messageRepository.findById(messageId);
+        if (message.isEmpty()) {
+            return null;
+        }
+        return message.get();
     }
 
     public Message deleteMessage(int messageId) {
-        Message deletedMessage = messageRepository.getById(messageId);
-        if (deletedMessage != null) {
-            this.messageRepository.deleteById(messageId);
+        Optional<Message> deletedMessage = messageRepository.findById(messageId);
+        if (deletedMessage.isEmpty()) {
+            return null;
         }
-        return deletedMessage;
+        this.messageRepository.deleteById(messageId);
+        return deletedMessage.get();
     }
 
     public Message updateMessage(int messageId, Message newMessage) {
@@ -60,7 +66,7 @@ public class MessageService {
 
         newMessage.setMessageId(messageId);
         messageRepository.save(newMessage);
-        return messageRepository.getById(messageId);
+        return messageRepository.findById(messageId).get();
     }
 
     public List<Message> getMessageByAccount(int accountId) {
